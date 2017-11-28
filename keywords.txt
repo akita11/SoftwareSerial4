@@ -1,0 +1,26 @@
+#######################################
+# Syntax Coloring Map For LED_Tile
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+SoftwareSerial4	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+write	KEYWORD2
+read	KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+DIR_N	LITERAL1
+DIR_S	LITERAL1
+DIR_E	LITERAL1
+DIR_W	LITERAL1
