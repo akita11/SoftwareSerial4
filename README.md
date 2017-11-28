@@ -1,5 +1,5 @@
 4ch用SoftwareSerial
-by akita11(akita@ifdl.jp9
+by akita11(akita@ifdl.jp)
 
 インストールと動作チェック
 1.ファイルをzipでダウンロード(右のほうの緑の"clone or Download"から)
