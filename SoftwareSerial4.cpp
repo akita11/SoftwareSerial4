@@ -95,7 +95,8 @@ uint8_t SoftwareSerial4::write(uint8_t dir, uint8_t dat)
 {
   // _pTxWrite 0--->1->2->3->....->0
   // _pTxRead  0----(TX)---->1
-  if (_pTxWrite[dir] == _pTxRead[dir]){
+  // ToDo: check buffer full based on buffer size
+  if (_pTxWrite[dir] == _pTxRead[dir]){ // buffer empty
     _TxBuf[dir][_pTxWrite[dir]] = dat;
     _pTxWrite[dir] = (_pTxWrite[dir] + 1) % TXBUF_SIZE;
     return(1);
