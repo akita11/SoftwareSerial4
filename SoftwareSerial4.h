@@ -34,7 +34,7 @@ class SoftwareSerial4
 		  int TxPinS, int RxPinS,
 		  int TxPinE, int RxPinE,
 		  int TxPinW, int RxPinW);
-  void write(uint8_t dir, uint8_t dat);
+  uint8_t write(uint8_t dir, uint8_t dat); // returns 1 if OK, 0 if buffer full (fail)
   uint8_t available(uint8_t dir);
   int read(uint8_t dir); // return -1 if empty
 
