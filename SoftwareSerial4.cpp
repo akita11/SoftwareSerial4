@@ -91,10 +91,16 @@ void SoftwareSerial4::_process()
   }
 }
 
-void SoftwareSerial4::write(uint8_t dir, uint8_t dat)
+uint8_t SoftwareSerial4::write(uint8_t dir, uint8_t dat)
 {
-  _TxBuf[dir][_pTxWrite[dir]] = dat;
-  _pTxWrite[dir] = (_pTxWrite[dir] + 1) % TXBUF_SIZE;
+  // _pTxWrite 0--->1->2->3->....->0
+  // _pTxRead  0----(TX)---->1
+  if (_pTxWrite[dir] == _pTxRead[dir]){
+    _TxBuf[dir][_pTxWrite[dir]] = dat;
+    _pTxWrite[dir] = (_pTxWrite[dir] + 1) % TXBUF_SIZE;
+    return(1);
+  }
+  else return(0);
 }
 
 uint8_t SoftwareSerial4::available(uint8_t dir)
