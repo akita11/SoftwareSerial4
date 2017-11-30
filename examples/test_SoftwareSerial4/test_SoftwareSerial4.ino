@@ -27,10 +27,10 @@ void loop() {
 
   // send data for N/S/E/W
   Serial.println(d, HEX);
-  if (ss4.write(DIR_N, d) == 0) Serial.println("Write error for N");
-  if (ss4.write(DIR_S, 0x20 | d) == 0) Serial.println("Write error for S");
-  if (ss4.write(DIR_E, 0x40 | d) == 0) Serial.println("Write error for E");
-  if (ss4.write(DIR_W, 0x80 | d) == 0) Serial.println("Write error for W");
+  if (ss4.write(DIR_N, d) == -1) Serial.println("Write error for N");
+  if (ss4.write(DIR_S, 0x20 | d) == -1) Serial.println("Write error for S");
+  if (ss4.write(DIR_E, 0x40 | d) == -1) Serial.println("Write error for E");
+  if (ss4.write(DIR_W, 0x80 | d) == -1) Serial.println("Write error for W");
   d = (d + 1) & 0x1f;
   delay(1000);
 }
