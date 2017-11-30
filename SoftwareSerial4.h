@@ -26,7 +26,7 @@ class SoftwareSerial4
   volatile uint8_t _TxStatus[4]; // tx status (0=idle, 1-4=start bit, 5-36=data, 37-40=stop bit)
   volatile uint8_t _RxStatus[4]; // rx status (0=idle, 1-4=start bit, 5-36=data, 37-40=stop bit)
   volatile uint8_t _TxRxStatus;
- 
+  volatile uint8_t _TxSendingData;
  public:
   static SoftwareSerial4 *active_object;
   void _process();
@@ -34,7 +34,7 @@ class SoftwareSerial4
 		  int TxPinS, int RxPinS,
 		  int TxPinE, int RxPinE,
 		  int TxPinW, int RxPinW);
-  uint8_t write(uint8_t dir, uint8_t dat); // returns 1 if OK, 0 if buffer full (fail)
+  int write(uint8_t dir, uint8_t dat); // returns 0 if OK, -1 if fail
   uint8_t available(uint8_t dir);
   int read(uint8_t dir); // return -1 if empty
 

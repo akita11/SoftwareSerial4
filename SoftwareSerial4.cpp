@@ -73,35 +73,38 @@ void SoftwareSerial4::_process()
     // TX
     if (_pTxRead[i] != _pTxWrite[i]){
       _TxStatus[i]++;
-      if (_TxStatus[i] == 1) digitalWrite(_TxPin[i], 0); // start bit
+      if (_TxStatus[i] == 1){
+	_TxSendingData = _TxBuf[i][_pTxRead[i]];
+	_pTxRead[i] = (_pTxRead[i] + 1) % TXBUF_SIZE;
+	digitalWrite(_TxPin[i], 0); // start bit
+      }
       else if ((_TxStatus[i] % COUNT_BIT) == 1){
 	if (_TxStatus[i] == (COUNT_BIT * 9 + 1)) digitalWrite(_TxPin[i], 1); // stop bit
 	else{
-	  if ((_TxBuf[i][_pTxRead[i]] & 0x01) != 0) digitalWrite(_TxPin[i], 1);
+	  if ((_TxSendingData & 0x01) != 0) digitalWrite(_TxPin[i], 1);
 	  else digitalWrite(_TxPin[i], 0);
-	  _TxBuf[i][_pTxRead[i]] = _TxBuf[i][_pTxRead[i]] >> 1;
+	  _TxSendingData = _TxSendingData >> 1;
 	}
       }
       if (_TxStatus[i] == COUNT_BIT * 10){
 	_TxStatus[i] = 0;
-	_pTxRead[i] = (_pTxRead[i] + 1) % TXBUF_SIZE;
 	digitalWrite(_TxPin[i], 1);
       }
     }
   }
 }
 
-uint8_t SoftwareSerial4::write(uint8_t dir, uint8_t dat)
+int SoftwareSerial4::write(uint8_t dir, uint8_t dat)
 {
-  // _pTxWrite 0--->1->2->3->....->0
-  // _pTxRead  0----(TX)---->1
+  // _pTxWrite 0--->1->2->3->......->0->1->2->3(=overrun)
+  // _pTxRead  0----(TX)---->1-(TX)->2
   // ToDo: check buffer full based on buffer size
-  if (_pTxWrite[dir] == _pTxRead[dir]){ // buffer empty
+  if (_pTxWrite[dir] >= _pTxRead[dir]){ // buffer available
     _TxBuf[dir][_pTxWrite[dir]] = dat;
     _pTxWrite[dir] = (_pTxWrite[dir] + 1) % TXBUF_SIZE;
-    return(1);
+    return(0); // OK
   }
-  else return(0);
+  else return(-1); // NG (buffer overrun)
 }
 
 uint8_t SoftwareSerial4::available(uint8_t dir)
