@@ -71,22 +71,24 @@ void SoftwareSerial4::_process()
     }
 
     // TX
-    if (_pTxRead[i] != _pTxWrite[i]){
+    if (_pTxRead[i] != _pTxWrite[i] && _TxStatus[i] == 0)
+      _TxStatus[i] = 1;
+    if (_TxStatus[i] != 0){
       _TxStatus[i]++;
-      if (_TxStatus[i] == 1){
+      if (_TxStatus[i] == 2){
 	_TxSendingData = _TxBuf[i][_pTxRead[i]];
 	_pTxRead[i] = (_pTxRead[i] + 1) % TXBUF_SIZE;
 	digitalWrite(_TxPin[i], 0); // start bit
       }
-      else if ((_TxStatus[i] % COUNT_BIT) == 1){
-	if (_TxStatus[i] == (COUNT_BIT * 9 + 1)) digitalWrite(_TxPin[i], 1); // stop bit
+      else if ((_TxStatus[i] % COUNT_BIT) == 2){
+	if (_TxStatus[i] == (COUNT_BIT * 9 + 2)) digitalWrite(_TxPin[i], 1); // stop bit
 	else{
 	  if ((_TxSendingData & 0x01) != 0) digitalWrite(_TxPin[i], 1);
 	  else digitalWrite(_TxPin[i], 0);
 	  _TxSendingData = _TxSendingData >> 1;
 	}
       }
-      if (_TxStatus[i] == COUNT_BIT * 10){
+      if (_TxStatus[i] == COUNT_BIT * 10 + 2){
 	_TxStatus[i] = 0;
 	digitalWrite(_TxPin[i], 1);
       }
