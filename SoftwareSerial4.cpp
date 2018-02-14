@@ -16,23 +16,28 @@ SoftwareSerial4::SoftwareSerial4(int TxPinN, int RxPinN, int TxPinS, int RxPinS,
     pinMode(_TxPin[i], OUTPUT); digitalWrite(_TxPin[i], HIGH);
     pinMode(_RxPin[i], INPUT); digitalWrite(_RxPin[i], HIGH);
   }
-  TCCR1A = 0; // clear control register A 
-  TCCR1B = _BV(WGM13); // set mode as phase and frequency correct pwm, stop the timer
-  //  ICR1 = 2804;
-  //  ICR1 = 3300; // 8MHz/2/3300=1.2kHz:825us / 825us*3*8=19.8ms/frame
-  ICR1 = 3500;
-  //  ICR1 = 3840; // 23ms/frame (43.4fps)
-  TCCR1B &= ~(_BV(CS10) | _BV(CS11) | _BV(CS12));
-  TCCR1B |= _BV(CS10); // no prescaler
-  TIMSK1 = _BV(TOIE1); // sets the timer overflow interrupt enable bit
-
   SoftwareSerial4::active_object = this;
+  init();
+}
+
+void SoftwareSerial4::init()
+{
+  TCCR1A = 0; // clear control register A
+  ICR1 = 3500; // 8MHz/(3500*2) = 
+  TCCR1B = _BV(WGM13); // set mode as phase and frequency correct pwm, stop the timer (mode 8)
+  TCCR1B &= ~(_BV(CS10) | _BV(CS11) | _BV(CS12));
+  TCCR1B |= _BV(CS10); // no prescaler (clkIO)
+  TIMSK1 = _BV(TOIE1); // sets the timer overflow interrupt enable bit
 }
 
 SoftwareSerial4 *SoftwareSerial4::active_object = 0;
 
+int f = 0;
+
+// every 0.875ms / 1142kHz
 ISR(TIMER1_OVF_vect)
 {
+  digitalWrite(4, f); f = 1 - f;
   if(SoftwareSerial4::active_object){
     SoftwareSerial4::active_object->_process();
   }

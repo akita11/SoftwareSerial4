@@ -34,6 +34,7 @@ class SoftwareSerial4
 		  int TxPinS, int RxPinS,
 		  int TxPinE, int RxPinE,
 		  int TxPinW, int RxPinW);
+  void init();
   int write(uint8_t dir, uint8_t dat); // returns 0 if OK, -1 if fail
   uint8_t available(uint8_t dir);
   int read(uint8_t dir); // return -1 if empty
