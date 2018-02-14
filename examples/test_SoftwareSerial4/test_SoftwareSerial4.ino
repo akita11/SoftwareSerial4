@@ -10,6 +10,7 @@ SoftwareSerial4 ss4(2, 3, 4, 5, 6, 7, 8, 9);
 
 void setup() {
   Serial.begin(9600);
+  ss4.init();
 }
 
 int d = 0;
